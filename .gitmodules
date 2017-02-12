@@ -1,0 +1,3 @@
+[submodule "Fireworks"]
+	path = Fireworks
+	url = git@github.com:paullewis/Fireworks.git

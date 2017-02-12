@@ -1,0 +1,218 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Clock</title>
+		<style>
+			html, body {
+				font-family: sans-serif;
+				background-color: black;
+			}
+
+			#clock {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				height: 400px;
+				margin: auto;
+				z-index: 10;
+				opacity: .75;
+			}
+
+			*{
+				margin: 0;
+				padding: 0;
+				border: 0;
+				overflow: hidden;
+			}
+
+			ul {
+				float: left;
+				list-style: none;
+				width: 100000px;
+			}
+
+			li {
+				display: block;
+				float: left;
+				border: solid white;
+				border-width: 6px 0 0 6px;
+				padding: 12px;
+				font-size: 16pt;
+				font-weight: bold;
+				color: white;
+				text-align: center;
+				background-color: #999;
+			}
+
+			#line {
+				position: fixed;
+				left: 50%;
+				right: 50%;
+				border: 3px solid red;
+				height: 394px;
+				width: 0px;
+				z-index: 20;
+				margin: auto;
+				opacity: 0.6;
+			}
+
+			#seconds li {
+				width: 40px;
+				border-bottom-width: 6px;
+			}
+
+			#minutes li {
+				width: 80px;
+			}
+
+			#hours li {
+				width: 120px;
+			}
+
+			#days li {
+				width: 160px;
+				border-bottom-width: 6px;
+				margin-bottom: 58px;
+			}
+
+			#months li {
+				width: 200px;
+			}
+
+			#years li {
+				width: 240px;
+			}
+
+			.first {
+				border-left-color: #ff0000;
+			}
+
+			canvas {
+				position: fixed;
+				top: 0px;
+				left: 0px;
+				z-index: 5;
+				-webkit-transform: translateZ(0);
+			}
+
+			#library {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="clock">
+			<ul id="years"></ul>
+			<ul id="months"></ul>
+			<ul id="days"></ul>
+			<ul id="hours"></ul>
+			<ul id="minutes"></ul>
+			<ul id="seconds"></ul>
+			<div id="line"></div>
+		</div>
+		<script src="./Fireworks/third_party/requestanimframe.js"></script>
+		<script>
+			function tick()
+			{
+				var date = new Date();
+
+				width = 30; // I have nu clue why this must be 30
+				width_steps = 40;
+
+				var s = date.getSeconds() + date.getMilliseconds()/1000;
+				seconds.style.marginLeft = "-"+((width+=width_steps)*(60+s)-(document.body.clientWidth/2))+"px";
+
+				var m = date.getMinutes() + date.getSeconds()/60 + date.getMilliseconds()/60000;
+				minutes.style.marginLeft = "-"+((width+=width_steps)*(60+m)-(document.body.clientWidth/2))+"px";
+
+				var h = date.getHours() + date.getMinutes()/60 + date.getSeconds()/3600 + date.getMilliseconds()/3600000;
+				hours.style.marginLeft = "-"+((width+=width_steps)*(24+h)-(document.body.clientWidth/2))+"px";
+
+				var d = date.getDate()-1 + date.getHours()/24 + date.getMinutes()/60/24 + date.getSeconds()/3600/24 + date.getMilliseconds()/3600000/24;
+				days.style.marginLeft = "-"+((width+=width_steps)*(num_days+d)-(document.body.clientWidth/2))+"px";
+
+				var mo = date.getMonth() + (date.getDate()-1)/num_days + date.getHours()/24/num_days + date.getMinutes()/60/24/num_days + date.getSeconds()/3600/24/num_days + date.getMilliseconds()/3600000/24/num_days;
+				months.style.marginLeft = "-"+((width+=width_steps)*(12+mo)-(document.body.clientWidth/2))+"px";
+
+				var y = date.getYear()-100 + date.getMonth()/12 + (date.getDate()-1)/num_days/12 + date.getHours()/24/num_days/12 + date.getMinutes()/60/24/num_days/12 + date.getSeconds()/3600/24/num_days/12 + date.getMilliseconds()/3600000/24/num_days/12;
+				years.style.marginLeft = "-"+((width+=width_steps)*(100+y)-(document.body.clientWidth/2))+"px";
+
+				requestAnimFrame(tick);
+			}
+
+			function generate_numbers(parent, start, num)
+			{
+				for(i = 0; i < 3; i++)
+				{
+					for(j = 0; j < num; j++)
+					{
+						var li = document.createElement('li');
+						var number = document.createTextNode(start+j);
+						li.appendChild(number);
+						parent.appendChild(li);
+					}
+				}
+			}
+
+			function generate_texts(parent, texts)
+			{
+				for(i = 0; i < 3; i++)
+				{
+					for(j = 0; j < texts.length; j++)
+					{
+						var li = document.createElement('li');
+						var text = document.createTextNode(texts[j]);
+						li.appendChild(text);
+						parent.appendChild(li);
+					}
+				}
+			}
+
+			var seconds = document.querySelector("#seconds");
+			var minutes = document.querySelector("#minutes");
+			var hours   = document.querySelector("#hours");
+			var days    = document.querySelector("#days");
+			var months  = document.querySelector("#months");
+			var years   = document.querySelector("#years");
+
+			generate_numbers(seconds, 0, 60);
+			generate_numbers(minutes, 0, 60);
+			generate_numbers(hours, 0, 24);
+
+			// silly trick to find the correct number of days to display
+			// which is not always the same as the number of days in the current month...
+			var tmp_date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()-10);
+			num_days = new Date(tmp_date.getFullYear(), tmp_date.getMonth()+1, 0).getDate();
+			generate_numbers(days, 1, num_days);
+
+			generate_texts(months, ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']);
+			generate_numbers(years, 2000, 100);
+
+			tick();
+		</script>
+		<aside id="library">
+			<img src="./Fireworks/images/big-glow.png" id="big-glow" />
+			<img src="./Fireworks/images/small-glow.png" id="small-glow" />
+		</aside>
+		<script src="./Fireworks/js/fireworks.js"></script>
+		<script>
+			// fireworx are kinda cool!
+			// thanks, https://github.com/paullewis/Fireworks
+			function testFireworkDateTime() {
+				if(!document.hidden && new Date().getMonth() == 0 && new Date().getDate() == 1 && new Date().getHours() < 2) {
+					if(document.querySelector('canvas') == null) {
+						Fireworks.initialize();
+					}
+					Fireworks.createParticle();
+					fireworksTimeout = setTimeout(testFireworkDateTime, 500+(Math.random()*2500));
+				} else {
+					fireworksTimeout = setTimeout(testFireworkDateTime, 100);
+				}
+			}
+			testFireworkDateTime();
+		</script>
+	</body>
+</html>
