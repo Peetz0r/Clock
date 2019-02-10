@@ -89,18 +89,6 @@
 			.first {
 				border-left-color: #ff0000;
 			}
-
-			canvas {
-				position: fixed;
-				top: 0px;
-				left: 0px;
-				z-index: 5;
-				-webkit-transform: translateZ(0);
-			}
-
-			#library {
-				display: none;
-			}
 		</style>
 	</head>
 	<body>
@@ -113,7 +101,6 @@
 			<ul id="seconds"></ul>
 			<div id="line"></div>
 		</div>
-		<script src="./Fireworks/third_party/requestanimframe.js"></script>
 		<script>
 			function tick()
 			{
@@ -140,7 +127,7 @@
 				var y = date.getYear()-100 + date.getMonth()/12 + (date.getDate()-1)/num_days/12 + date.getHours()/24/num_days/12 + date.getMinutes()/60/24/num_days/12 + date.getSeconds()/3600/24/num_days/12 + date.getMilliseconds()/3600000/24/num_days/12;
 				years.style.marginLeft = "-"+((width+=width_steps)*(100+y)-(document.body.clientWidth/2))+"px";
 
-				requestAnimFrame(tick);
+				requestAnimationFrame(tick);
 			}
 
 			function generate_numbers(parent, start, num)
@@ -192,27 +179,6 @@
 			generate_numbers(years, 2000, 100);
 
 			tick();
-		</script>
-		<aside id="library">
-			<img src="./Fireworks/images/big-glow.png" id="big-glow" />
-			<img src="./Fireworks/images/small-glow.png" id="small-glow" />
-		</aside>
-		<script src="./Fireworks/js/fireworks.js"></script>
-		<script>
-			// fireworx are kinda cool!
-			// thanks, https://github.com/paullewis/Fireworks
-			function testFireworkDateTime() {
-				if(!document.hidden && new Date().getMonth() == 0 && new Date().getDate() == 1 && new Date().getHours() < 2) {
-					if(document.querySelector('canvas') == null) {
-						Fireworks.initialize();
-					}
-					Fireworks.createParticle();
-					fireworksTimeout = setTimeout(testFireworkDateTime, 500+(Math.random()*2500));
-				} else {
-					fireworksTimeout = setTimeout(testFireworkDateTime, 100);
-				}
-			}
-			testFireworkDateTime();
 		</script>
 	</body>
 </html>
